@@ -61,7 +61,7 @@ L3MON includes a built-in APK builder accessible from the web dashboard:
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/user/l3mon.git
+   git clone https://github.com/D3VL/l3mon.git
    cd l3mon/client
    ```
 

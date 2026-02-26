@@ -78,6 +78,10 @@
                     <div class="ui error message"></div>
                     <% if (error === 'badLogin') { %>
                     <div class="ui negative message">Invalid username or password.</div>
+                    <% } else if (error === 'missingUsername') { %>
+                    <div class="ui negative message">Please enter your username.</div>
+                    <% } else if (error === 'missingPassword') { %>
+                    <div class="ui negative message">Please enter your password.</div>
                     <% } %>
 
                 </div>

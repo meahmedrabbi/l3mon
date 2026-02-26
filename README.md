@@ -52,10 +52,14 @@ A cloud based remote android management suite, powered by NodeJS
     - `pm2 start index.js` <-- start the script
     - `pm2 startup` <- to run L3MON on startup
 
-6. Set a Username & Password
+6. The server starts with default credentials:
+    - **Username:** `admin`
+    - **Password:** `admin`
+
+   > ⚠️ **Change these immediately after first login.** To update credentials:
     1. Stop L3MON `pm2 stop index`
     2. Open `maindb.json` in a text editor
-    3. under `admin` 
+    3. under `admin`
         - set the `username` as plain text
         - set the `password` as a LOWERCASE MD5 hash
     4. save the file

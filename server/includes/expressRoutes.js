@@ -39,7 +39,7 @@ routes.get('/', isAllowed, (req, res) => {
 
 
 routes.get('/login', (req, res) => {
-    res.render('login');
+    res.render('login', { error: req.query.e || null });
 });
 
 routes.post('/login', (req, res) => {

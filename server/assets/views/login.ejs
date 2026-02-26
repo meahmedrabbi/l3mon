@@ -76,6 +76,9 @@
                     </div>
                     <div class="ui fluid large teal submit button">Login</div>
                     <div class="ui error message"></div>
+                    <% if (error === 'badLogin') { %>
+                    <div class="ui negative message">Invalid username or password.</div>
+                    <% } %>
 
                 </div>
 

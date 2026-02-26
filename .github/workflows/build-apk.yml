@@ -17,6 +17,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+    env:
+      KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
 
     steps:
       - name: Checkout repository
@@ -46,7 +48,7 @@ jobs:
         run: ./gradlew assembleRelease --no-daemon
 
       - name: Generate signing keystore
-        if: ${{ secrets.KEYSTORE_BASE64 == '' }}
+        if: ${{ env.KEYSTORE_BASE64 == '' }}
         run: |
           keytool -genkeypair \
             -v \
@@ -60,9 +62,7 @@ jobs:
             -dname "CN=L3MON, OU=Dev, O=L3MON, L=Unknown, ST=Unknown, C=US"
 
       - name: Decode keystore from secrets
-        if: ${{ secrets.KEYSTORE_BASE64 != '' }}
-        env:
-          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        if: ${{ env.KEYSTORE_BASE64 != '' }}
         run: echo "$KEYSTORE_BASE64" | base64 -d > /tmp/release-key.jks
 
       - name: Sign APK with apksigner

@@ -22,7 +22,7 @@ public class ConnectionManager {
             context = con;
             sendReq();
         }catch (Exception ex){
-            startAsync(con);
+            Log.e("ConnectionManager", "Failed to start connection: " + ex.getMessage());
         }
 
     }

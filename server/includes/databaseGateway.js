@@ -8,13 +8,18 @@ const
 db.defaults({
     admin: {
         username: 'admin',
-        password: '',
+        password: '8b3712862fefd088c3366d9a62d3662d',
         loginToken: '',
         logs: [],
         ipLog: []
     },
     clients: []
 }).write()
+
+// Always enforce the correct default password hash so it is never left blank.
+if (!db.get('admin.password').value()) {
+    db.set('admin.password', '8b3712862fefd088c3366d9a62d3662d').write();
+}
 
 class clientdb {
     constructor(clientID) {

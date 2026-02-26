@@ -39,7 +39,9 @@ routes.get('/', isAllowed, (req, res) => {
 
 
 routes.get('/login', (req, res) => {
-    res.render('login');
+    const validErrors = ['badLogin', 'missingUsername', 'missingPassword'];
+    const error = validErrors.includes(req.query.e) ? req.query.e : null;
+    res.render('login', { error });
 });
 
 routes.post('/login', (req, res) => {

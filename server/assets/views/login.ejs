@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 
-<% include partials/head.ejs %>
+<%- include('partials/head.ejs') %>
 
 
 <body>
@@ -76,11 +76,18 @@
                     </div>
                     <div class="ui fluid large teal submit button">Login</div>
                     <div class="ui error message"></div>
+                    <% if (error === 'badLogin') { %>
+                    <div class="ui negative message">Invalid username or password.</div>
+                    <% } else if (error === 'missingUsername') { %>
+                    <div class="ui negative message">Please enter your username.</div>
+                    <% } else if (error === 'missingPassword') { %>
+                    <div class="ui negative message">Please enter your password.</div>
+                    <% } %>
 
                 </div>
 
             </form>
-            <% include partials/footer.ejs %>
+            <%- include('partials/footer.ejs') %>
         </div>
     </div>
 </body>

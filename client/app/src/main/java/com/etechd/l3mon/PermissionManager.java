@@ -6,6 +6,8 @@ import android.content.pm.PackageManager;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import androidx.core.content.ContextCompat;
+
 import static com.etechd.l3mon.ConnectionManager.context;
 
 public class PermissionManager {
@@ -25,8 +27,7 @@ public class PermissionManager {
     }
 
     public static boolean canIUse(String perm) {
-        if(context.getPackageManager().checkPermission(perm, context.getPackageName()) == PackageManager.PERMISSION_GRANTED) return true;
-        else return false;
+        return ContextCompat.checkSelfPermission(context, perm) == PackageManager.PERMISSION_GRANTED;
     }
 
 }

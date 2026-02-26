@@ -7,10 +7,11 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import androidx.core.content.ContextCompat;
 
 import static com.etechd.l3mon.ConnectionManager.context;
 import static android.content.Context.LOCATION_SERVICE;
@@ -32,7 +33,8 @@ public class LocManager implements LocationListener {
     private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10; // 10 meters
 
     // The minimum time between updates in milliseconds
-    private static final long MIN_TIME_BW_UPDATES = 1000 * 60 * 1; // 10 minutes
+    private static final long MIN_TIME_BW_UPDATES = 1000 * 60 * 1; // 1 minute
+
 
     // Declaring a Location Manager
     protected LocationManager locationManager;
@@ -60,8 +62,8 @@ public class LocManager implements LocationListener {
             if (isGPSEnabled || isNetworkEnabled) {
 
                 this.canGetLocation = true;
-                if(context.getPackageManager().checkPermission(Manifest.permission.ACCESS_FINE_LOCATION, context.getPackageName()) == PackageManager.PERMISSION_GRANTED &&
-                        context.getPackageManager().checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION, context.getPackageName()) == PackageManager.PERMISSION_GRANTED) {
+                if(ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                        ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                     // First get location from Network Provider
                     if (isNetworkEnabled) {
 
